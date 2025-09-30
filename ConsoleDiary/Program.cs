@@ -2,6 +2,7 @@
 {
     class Program
     {
+        private static List<JournalEntries> journalEntries = new List<JournalEntries>();
         static void Main(string[] args)
         {
             Console.WriteLine("Console Diary");
@@ -34,49 +35,44 @@
 
         static void AddJournalEntry()
         {
-            using (var context = new DiaryContext())
+            Console.Write("Enter title: ");
+            string title = Console.ReadLine();
+
+            Console.Write("Enter content: ");
+            string content = Console.ReadLine();
+
+            var question = new JournalEntries { Title = title, Content = content, CreatedAt = DateTime.Now };
+            journalEntries.Add(question);
+
+            Console.WriteLine($"Question '{title}' added successfully.");
+
+            Console.WriteLine("\nDo you want to add another question? (Y/N)");
+            string addAnother = Console.ReadLine().ToLower();
+
+            if (addAnother == "y")
             {
-                Console.Write("Enter title: ");
-                string title = Console.ReadLine();
-
-                Console.Write("Enter content: ");
-                string content = Console.ReadLine();
-
-                var question = new JournalEntries { Title = title, Content = content, CreatedAt = DateTime.Now };
-                context.JournalEntries.Add(question);
-                context.SaveChanges();
-
-                Console.WriteLine($"Question '{title}' added successfully.");
-
-                Console.WriteLine("\nDo you want to add another question? (Y/N)");
-                string addAnother = Console.ReadLine().ToLower();
-
-                if (addAnother == "y")
-                {
-                    AddJournalEntry();
-                }
+                AddJournalEntry();
             }
         }
 
         static void ListEntries()
         {
-            using (var context = new DiaryContext())
-            {
-                var journalEntries = context.JournalEntries.ToList();
 
-                if (journalEntries.Any())
+            var entries = journalEntries.ToList();
+
+            if (journalEntries.Any())
+            {
+                Console.WriteLine("\nAll Entries:");
+                foreach (var entry in journalEntries)
                 {
-                    Console.WriteLine("\nAll Entries:");
-                    foreach (var entry in journalEntries)
-                    {
-                        Console.WriteLine($"{entry.Id}. {entry.Title}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No entries found.");
+                    Console.WriteLine($"{entry.Title}");
                 }
             }
+            else
+            {
+                Console.WriteLine("No entries found.");
+            }
+
         }
     }
 }
